@@ -1,0 +1,3 @@
+motor driver rotate to make it square 
+30 pins idc
+FUSES
