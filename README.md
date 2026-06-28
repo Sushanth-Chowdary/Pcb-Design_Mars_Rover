@@ -1,29 +1,37 @@
-# Autonomous Mars Rover: Dual-PCB Electrical Architecture
+# Autonomous Mars Rover: Electrical & PCB Architecture
 
 ## 📌 Project Overview
-This repository contains the schematic and PCB design files for the electrical subsystem of an Autonomous Mars Rover prototype. The system features a robust, split-board architecture designed to safely manage high-current power distribution while maintaining signal integrity for low-voltage logic and control systems. 
+This repository contains the schematic and PCB design files for the electrical subsystem of an Autonomous Mars Rover prototype. The system manages high-current power distribution for actuators while maintaining signal integrity for low-voltage control systems. 
 
-## 🏗️ System Architecture
-To isolate high-power noise from sensitive microcontrollers, the design is split into two specialized printed circuit boards:
+To accommodate different manufacturing preferences and structural constraints, this repository offers **two distinct PCB architectures**: a split Dual-PCB design and an Integrated Single-PCB design.
 
-### 1. Power Distribution Board (4-Layer)
-Handles all high-current routing, power regulation, and battery management.
-* **Power Source:** 22.2V, 22000mAh LiPo battery.
-* **Power Delivery:** * Regulates and distributes **12V** to the drive system.
-  * Regulates and distributes **7.5V** to the servo UBECs.
-* **Circuit Protection:** Hierarchical safety architecture using automotive blade fuses. Features a primary **70-80A main fuse** paired with dedicated subsystem fuses to prevent overcurrent events.
+## 🏗️ System Architectures
 
-### 2. Control & Logic Board (2-Layer)
-Houses the low-voltage control routing and interfaces with the primary compute units.
-* **Compute Modules:** Designed to integrate with an **Arduino Mega** (real-time motor control) and a **Jetson Orin Nano** (high-level autonomy and vision).
-* **Signal Routing:** Manages PWM, direction, and logic signals for the actuators.
+### Option A: Integrated Single-PCB (Combined)
+A unified design where both the high-power distribution and the low-voltage logic are integrated onto a single, multi-layer board.
+* **Direct Routing:** Eliminates the need for board-to-board connectors. The Arduino Mega and Jetson Orin Nano signals are routed directly to the motor drivers and UBECs on the same board.
+* **Space-Efficient:** Ideal for chassis designs with constrained vertical mounting space.
 
-## ⚙️ Hardware Interfaces
-Communication between the Power Distribution Board and the Control Board is handled via a precise **20-pin IDC connector interface**. Common ground references and isolated shields are strictly established to prevent ground loops.
+> <img width="1186" height="733" alt="image" src="https://github.com/user-attachments/assets/b43eef76-336e-4bf0-b83b-f2d6e6e81924" /><img width="955" height="570" alt="image" src="https://github.com/user-attachments/assets/84fab42a-4081-4b79-b5df-8c1fd6ed8736" /><img width="1112" height="585" alt="image" src="https://github.com/user-attachments/assets/31e92a9e-694d-47b1-b4b4-8f5170fa9dda" />
 
-### 20-Pin IDC Interface Mapping
 
-| IDC Pin | Arduino Mega Pin | Signal Name | Target Connection (Bottom PCB) | Signal Type / Design Note |
+
+### Option B: Dual-PCB Architecture (Split)
+A robust, split-board architecture designed for maximum physical isolation of high-power noise from sensitive microcontrollers.
+* **Power Distribution Board (4-Layer):** Handles 22.2V LiPo input, high-current routing, and hierarchical blade-fuse protection. Regulates 12V for motors and 7.5V for servos.
+* **Control & Logic Board (2-Layer):** Houses the low-voltage routing for the Arduino Mega and Jetson Orin Nano. 
+* **Connection:** Uses a 20-pin IDC connector to bridge signals between the two boards.
+
+> <img width="776" height="579" alt="image" src="https://github.com/user-attachments/assets/8f1fc1b7-4f43-4479-9f7e-bae6867f2f5f" /><img width="856" height="859" alt="image" src="https://github.com/user-attachments/assets/4de9862c-5221-49f8-86f9-4ebf1d9ecd81" /><img width="901" height="940" alt="image" src="https://github.com/user-attachments/assets/27976c66-24a4-43f3-bdea-dac625b04451" />
+
+> <img width="996" height="704" alt="image" src="https://github.com/user-attachments/assets/8c373ca3-2249-4699-af08-1ba54f14cb32" /><img width="1280" height="699" alt="image" src="https://github.com/user-attachments/assets/8dc0457b-9b69-4bae-b324-40a9fc4eec61" /><img width="1280" height="691" alt="image" src="https://github.com/user-attachments/assets/7fedf576-8c64-40e9-95f3-c9728c5b1a73" />
+
+## ⚙️ Hardware Interfaces & Pin Mapping
+
+The following table dictates the routing from the compute modules (Arduino Mega) to the motor drivers and servos. 
+* *Note: For the Dual-PCB design, these map directly to the 20-pin IDC connector. For the Single-PCB design, these represent the direct internal traces.*
+
+| Signal / Pin # | Arduino Mega Pin | Signal Name | Target Component | Signal Type / Design Note |
 | :---: | :---: | :--- | :--- | :--- |
 | **1** | 5V (VCC) | `LOGIC_5V` | Logic Power Reference | Pull-ups / Sensor logic ref |
 | **2** | D2 | `M1_PWM` | Cytron M1 MD20A PWM | Motor 1 Speed Control |
@@ -47,15 +55,16 @@ Communication between the Power Distribution Board and the Control Board is hand
 | **20** | D32 | `S3_SIGNAL` | Ultra Torque Servo 3 | Servo 3 Position Command |
 
 ## 📁 Repository Structure
-* `/Schematics`: PDF and source files for the schematic capture.
-* `/PCB_Layout`: Board files for both the 4-layer Power Board and 2-layer Control Board.
-* `/Gerber_Files`: Manufacturing files ready for fabrication.
-* `/BOM`: Bill of Materials, including specific part numbers for the 20-pin IDC, automotive fuses, and ICs.
+
+* `PCB Mars.zip` - Contains the files for the **Integrated Single-PCB** architecture.
+* `PCB MARS_SHEET1.zip` - Contains the files for the **Control & Logic Board** (Dual-PCB).
+* `PCB MARS_SHEET2.zip` - Contains the files for the **Power Distribution Board** (Dual-PCB).
+* *(Add a note here if `New Text Document.txt` contains specific BOM or build notes)*
 
 ## 🛠️ Testing & Validation Status
 - [x] Assembly and component clearance verification.
 - [x] Voltage regulation and current draw analysis under load.
-- [x] Logic signal transmission across the IDC interface.
+- [x] Logic signal transmission verification.
 - [ ] Physical obstacle navigation testing (System Level).
 
 ---
